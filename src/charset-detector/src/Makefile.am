@@ -6,7 +6,7 @@ AM_CXXFLAGS = \
 	-nostdinc++ \
 	-D_REENTRANT
 
-INCLUDES = \
+AM_CPPFLAGS = \
 	-I../include \
 	-I./entry \
 	-I./tables
