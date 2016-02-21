@@ -25,7 +25,7 @@
 #	include "config.h"
 #endif
 #ifdef ENABLE_CHARDETECT
-#	include "chardetect.h"
+#	include "uchardet.h"
 #endif
 
 gboolean check_file_writable(gchar *filename)
@@ -133,15 +133,12 @@ gint file_open_real(GtkWidget *view, FileInfo *fi)
 		charset = fi->charset;
 	else {
 #ifdef ENABLE_CHARDETECT
-		chardet_t det;
-		char encoding[CHARDET_MAX_ENCODING_NAME];
-		chardet_create(&det);
-		chardet_reset(det);
-		chardet_handle_data(det, contents, strlen(contents));
-		chardet_data_end(det);
-		chardet_get_charset(det, encoding, CHARDET_MAX_ENCODING_NAME);
-		chardet_destroy(det);
-		charset = encoding;
+		uchardet_t det = uchardet_new();
+		uchardet_reset(det);
+		uchardet_handle_data(det, contents, strlen(contents));
+		uchardet_data_end(det);
+		charset = g_strdup(uchardet_get_charset(det));
+		uchardet_delete(det);
 #else
 		charset = detect_charset(contents);
 #endif
